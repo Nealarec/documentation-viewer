@@ -1,0 +1,82 @@
+.directory {
+    padding: 5px;
+    .directory-name {
+        @extend .no-select;
+        cursor: pointer;
+        font-style: italic;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    .directory-elements {
+        padding-left: 1em;
+    }
+}
+
+.archive {
+    padding: 1rem;
+    label,
+    a {
+        display: block;
+    }
+    pre {
+        background: lightgray;
+        border: 1px solid gray;
+        border-radius: 5px;
+        padding: 1em;
+    }
+    .hidden {
+        height: 0;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        overflow: hidden;
+    }
+    .name {
+        font-weight: bold;
+        cursor: pointer;
+        &:select {
+            background-color: white;
+        }
+    }
+    .missing {
+        color: red;
+    }
+    .not-suported {
+        color: blue;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.no-select {
+    user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+}
+
+.nav-bar-item {
+    @extend .no-select;
+    padding-left: 1rem;
+    color: blue;
+    &:hover {
+        text-decoration: underline;
+    }
+    &:not(:first-child) {
+        &::before {
+            content: '/';
+            color: black;
+            padding-right: 1rem;
+            display: inline-block;
+        }
+    }
+}
+
+.all-oppen {
+    float: right;
+}
+
+img {
+    max-width: 100%;
+}
