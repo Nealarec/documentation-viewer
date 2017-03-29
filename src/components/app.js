@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Directory from './directory';
+import { loadFile } from '../config';
 
 import fs from 'fs';
 import path from 'path';
@@ -8,13 +9,11 @@ export default class App extends Component {
     constructor(props) {
         super(props);
         var route = "";
-        var directories = JSON.parse(fs.readFileSync(
-            path.resolve("../document-master.json")
-        ));
 
         this.state = {
             route: '',
-            directories,
+            document: '',
+            directories: {},
             all_oppen: false,
         }
     }
@@ -67,16 +66,34 @@ export default class App extends Component {
     }
 
     getRealPath() {
-        var { route } = this.state;
-        return path.resolve('../' + route);
+        var { route, document } = this.state;
+        return path.resolve(path.dirname(document), route);
     }
 
     toggleAllOppen() {
         this.setState({ all_oppen: !this.state.all_oppen });
     }
 
+    loadFlie({ files }) {
+        var path = files[0].path;
+        loadFile(path, 'utf-8').then(data => {
+            this.setState({
+                document: path,
+                directories: JSON.parse(data),
+            });
+        }).catch(e => alert('error al cargar el archivo!!'))
+    }
+    reloadFlie(path) {
+        loadFile(path, 'utf-8').then(data => {
+            this.setState({
+                document: path,
+                directories: JSON.parse(data),
+            });
+        }).catch(e => alert('error al cargar el archivo!!'))
+    }
+
     render() {
-        var { route, all_oppen } = this.state;
+        var { route, all_oppen, document } = this.state;
         var props = {
             route,
             all_oppen,
@@ -85,20 +102,26 @@ export default class App extends Component {
             goInto: r => this.goInto(r),
             objects: this.getDirectories(),
         }
-        return (
-            <div className="class-name">
-                <span className="app-path">{this.getPath()}</span>
-                <div className="all-oppen">
-                    <input
-                        id="all-oppen"
-                        type="checkbox"
-                        checked={this.state.all_oppen}
-                        onChange={e => this.toggleAllOppen()} />
 
-                    <label htmlFor="all-oppen">Expanded</label>
+        if (document.length) {
+            return (
+                <div className="class-name">
+                    <span className="app-path">{this.getPath()}</span>
+                    <div className="all-oppen">
+                        <input
+                            id="all-oppen"
+                            type="checkbox"
+                            checked={this.state.all_oppen}
+                            onChange={e => this.toggleAllOppen()} />
+
+                        <label htmlFor="all-oppen">Expanded</label>
+                        <input type="button" onClick={e => this.reloadFlie(document)} value="Reload" />
+                    </div>
+                    <Directory { ...props } />
                 </div>
-                <Directory { ...props } />
-            </div>
-        );
+            );
+        } else {
+            return <input type="file" onChange={e => this.loadFlie(e.target)} />
+        }
     }
 }

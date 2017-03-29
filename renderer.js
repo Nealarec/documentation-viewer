@@ -21267,6 +21267,8 @@
 
 	var _directory2 = _interopRequireDefault(_directory);
 
+	var _config = __webpack_require__(185);
+
 	var _fs = __webpack_require__(180);
 
 	var _fs2 = _interopRequireDefault(_fs);
@@ -21292,11 +21294,11 @@
 	        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
 	        var route = "";
-	        var directories = JSON.parse(_fs2.default.readFileSync(_path2.default.resolve("../document-master.json")));
 
 	        _this.state = {
 	            route: '',
-	            directories: directories,
+	            document: '',
+	            directories: {},
 	            all_oppen: false
 	        };
 	        return _this;
@@ -21371,9 +21373,11 @@
 	    }, {
 	        key: 'getRealPath',
 	        value: function getRealPath() {
-	            var route = this.state.route;
+	            var _state2 = this.state,
+	                route = _state2.route,
+	                document = _state2.document;
 
-	            return _path2.default.resolve('../' + route);
+	            return _path2.default.resolve(_path2.default.dirname(document), route);
 	        }
 	    }, {
 	        key: 'toggleAllOppen',
@@ -21381,13 +21385,45 @@
 	            this.setState({ all_oppen: !this.state.all_oppen });
 	        }
 	    }, {
-	        key: 'render',
-	        value: function render() {
+	        key: 'loadFlie',
+	        value: function loadFlie(_ref) {
 	            var _this3 = this;
 
-	            var _state2 = this.state,
-	                route = _state2.route,
-	                all_oppen = _state2.all_oppen;
+	            var files = _ref.files;
+
+	            var path = files[0].path;
+	            (0, _config.loadFile)(path, 'utf-8').then(function (data) {
+	                _this3.setState({
+	                    document: path,
+	                    directories: JSON.parse(data)
+	                });
+	            }).catch(function (e) {
+	                return alert('error al cargar el archivo!!');
+	            });
+	        }
+	    }, {
+	        key: 'reloadFlie',
+	        value: function reloadFlie(path) {
+	            var _this4 = this;
+
+	            (0, _config.loadFile)(path, 'utf-8').then(function (data) {
+	                _this4.setState({
+	                    document: path,
+	                    directories: JSON.parse(data)
+	                });
+	            }).catch(function (e) {
+	                return alert('error al cargar el archivo!!');
+	            });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this5 = this;
+
+	            var _state3 = this.state,
+	                route = _state3.route,
+	                all_oppen = _state3.all_oppen,
+	                document = _state3.document;
 
 	            var props = {
 	                route: route,
@@ -21395,36 +21431,46 @@
 	                oppen: true,
 	                files_path: this.getRealPath(),
 	                goInto: function goInto(r) {
-	                    return _this3.goInto(r);
+	                    return _this5.goInto(r);
 	                },
 	                objects: this.getDirectories()
 	            };
-	            return _react2.default.createElement(
-	                'div',
-	                { className: 'class-name' },
-	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'app-path' },
-	                    this.getPath()
-	                ),
-	                _react2.default.createElement(
+
+	            if (document.length) {
+	                return _react2.default.createElement(
 	                    'div',
-	                    { className: 'all-oppen' },
-	                    _react2.default.createElement('input', {
-	                        id: 'all-oppen',
-	                        type: 'checkbox',
-	                        checked: this.state.all_oppen,
-	                        onChange: function onChange(e) {
-	                            return _this3.toggleAllOppen();
-	                        } }),
+	                    { className: 'class-name' },
 	                    _react2.default.createElement(
-	                        'label',
-	                        { htmlFor: 'all-oppen' },
-	                        'Expanded'
-	                    )
-	                ),
-	                _react2.default.createElement(_directory2.default, props)
-	            );
+	                        'span',
+	                        { className: 'app-path' },
+	                        this.getPath()
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'all-oppen' },
+	                        _react2.default.createElement('input', {
+	                            id: 'all-oppen',
+	                            type: 'checkbox',
+	                            checked: this.state.all_oppen,
+	                            onChange: function onChange(e) {
+	                                return _this5.toggleAllOppen();
+	                            } }),
+	                        _react2.default.createElement(
+	                            'label',
+	                            { htmlFor: 'all-oppen' },
+	                            'Expanded'
+	                        ),
+	                        _react2.default.createElement('input', { type: 'button', onClick: function onClick(e) {
+	                                return _this5.reloadFlie(document);
+	                            }, value: 'Reload' })
+	                    ),
+	                    _react2.default.createElement(_directory2.default, props)
+	                );
+	            } else {
+	                return _react2.default.createElement('input', { type: 'file', onChange: function onChange(e) {
+	                        return _this5.loadFlie(e.target);
+	                    } });
+	            }
 	        }
 	    }]);
 
