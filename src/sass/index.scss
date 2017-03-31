@@ -1,4 +1,49 @@
+@import 'materialize-css/materialize';
+@import 'variables';
+@import 'scrollbar';
 @import 'directorios';
+@import 'file-loader';
+@import 'navigator';
+@media print {
+    img {
+        width: 100% !important;
+        height: 100% !important;
+    }
+    * {
+        -webkit-print-color-adjust: exact;
+        font-size: 8pt;
+    }
+    ul,
+    img,
+    .archive,
+    pre {
+        page-break-inside: avoid;
+    }
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    navigator {
+        top: unset;
+        bottom: 0rem;
+        .reload,
+        .all-oppen {
+            display: none;
+        }
+    }
+    @page {
+        padding: 2cm 2cm 2cm 2cm;
+        border: 1px solid;
+    }
+}
+
+img {
+    width: 100%;
+    height: 100%;
+}
+
 body {
     font-size: 100%;
+    overflow-y: scroll;
+    padding-top: 3rem;
 }

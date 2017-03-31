@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { loadFile } from 'config';
+import Element from "./element";
 
-export default class Text extends Component {
+export default class Text extends Element {
     constructor(props) {
         super(props);
         this.state = {
@@ -17,6 +18,10 @@ export default class Text extends Component {
     }
 
     componentDidMount() {
+        this.loadFile();
+    }
+
+    loadFile() {
         var { files_path } = this.props;
         loadFile(files_path, 'utf-8').then((data) => {
             this.setState({ data })
@@ -32,7 +37,7 @@ export default class Text extends Component {
         var { name, description } = this.props;
         return (
             <div className="archive">
-                <div className='name' onClick={e => this.toggleVisible()} >{name}</div>
+                <div className='name' onClick={e => this.toggleVisible()} >{this.getName()}</div>
                 <div className='description' htmlFor="" >{description}</div>
                 <pre className={visible ? '' : 'hidden'}>{this.state.data}</pre>
             </div>

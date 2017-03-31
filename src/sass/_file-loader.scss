@@ -1,0 +1,17 @@
+.file-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    input[type="file"] {
+        display: none;
+    }
+    input[type="button"] {
+        @extend .waves-effect;
+        @extend .waves-light;
+        @extend .btn;
+    }
+}

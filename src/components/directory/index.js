@@ -37,6 +37,16 @@ export default class Directory extends Component {
         };
     }
 
+    getName() {
+        var { beauty, name } = this.props;
+
+        if (beauty && name != undefined) {
+            return name.split("_").join(' ').toUpperCase();
+        } else {
+            return name;
+        }
+    }
+
     isOppen() {
         return this.state.oppen || this.props.all_oppen;
     }
@@ -44,17 +54,25 @@ export default class Directory extends Component {
     render() {
         var {
             name,
+            time,
             route,
             goInto,
+            beauty,
             objects,
             all_oppen,
             files_path,
          } = this.props;
+        var classNames = [
+            "directory-name",
+        ];
+        if (this.isOppen()) {
+            classNames.push('active');
+        }
         return (
             <div className="directory">
                 <span
-                    className="directory-name"
-                    onClick={this.onClick(e => this.toggleOppen(), e => this.goInto())} >{name}</span>
+                    className={classNames.join(' ')}
+                    onClick={this.onClick(e => this.toggleOppen(), e => this.goInto())} >{this.getName()}</span>
                 <div className="directory-elements">
                     {this.isOppen() ? Object.keys(objects).map((name) => {
                         var element = objects[name];
@@ -62,6 +80,8 @@ export default class Directory extends Component {
                         if (typeof element == "string") {
                             var props = {
                                 name,
+                                time,
+                                beauty,
                                 all_oppen,
                                 key: name,
                                 description: element,
@@ -71,7 +91,9 @@ export default class Directory extends Component {
                         } else {
                             var props = {
                                 name,
+                                time,
                                 goInto,
+                                beauty,
                                 all_oppen,
                                 key: name,
                                 objects: element,

@@ -14,7 +14,20 @@ export default class App extends Component {
             route: '',
             document: '',
             directories: {},
+            projectName: '',
             all_oppen: false,
+            beauty: false,
+            time: new Date().getTime(),
+        }
+    }
+    componentDidMount() {
+        try {
+            var file = sessionStorage.getItem('file');
+            if (file.length) {
+                this.prossesFile(file);
+            }
+        } catch (e) {
+
         }
     }
     goInto(route) {
@@ -23,7 +36,7 @@ export default class App extends Component {
     }
 
     getPath() {
-        var { route } = this.state;
+        var { route, projectName } = this.state;
         var tmp = [];
 
         if (route.length) {
@@ -48,10 +61,11 @@ export default class App extends Component {
         }
 
         return [
-            <span { ...props } >Mabe Vission</span>,
+            <span {...props}>{projectName}</span>,
             ...segments,
         ]
     }
+
 
     getDirectories() {
         var { route, directories } = this.state;
@@ -73,29 +87,35 @@ export default class App extends Component {
     toggleAllOppen() {
         this.setState({ all_oppen: !this.state.all_oppen });
     }
+    toggleBeauty() {
+        this.setState({ beauty: !this.state.beauty });
+    }
 
     loadFlie({ files }) {
         var path = files[0].path;
-        loadFile(path, 'utf-8').then(data => {
-            this.setState({
-                document: path,
-                directories: JSON.parse(data),
-            });
-        }).catch(e => alert('error al cargar el archivo!!'))
+        this.prossesFile(path);
+        sessionStorage.setItem('file', path);
     }
-    reloadFlie(path) {
+
+    prossesFile(path) {
         loadFile(path, 'utf-8').then(data => {
+            var data = JSON.parse(data);
+            var projectName = Object.keys(data)[0];
             this.setState({
                 document: path,
-                directories: JSON.parse(data),
+                projectName,
+                directories: data[projectName],
+                time: new Date().getTime(),
             });
         }).catch(e => alert('error al cargar el archivo!!'))
     }
 
     render() {
-        var { route, all_oppen, document } = this.state;
+        var { route, all_oppen, document, beauty, time } = this.state;
         var props = {
+            time,
             route,
+            beauty,
             all_oppen,
             oppen: true,
             files_path: this.getRealPath(),
@@ -106,22 +126,43 @@ export default class App extends Component {
         if (document.length) {
             return (
                 <div className="class-name">
-                    <span className="app-path">{this.getPath()}</span>
-                    <div className="all-oppen">
-                        <input
-                            id="all-oppen"
-                            type="checkbox"
-                            checked={this.state.all_oppen}
-                            onChange={e => this.toggleAllOppen()} />
+                    <navigator id="pageHeader">
+                        <span className="app-path">{this.getPath()}</span>
+                        <div className="all-oppen">
+                            <input
+                                id="all-oppen"
+                                type="checkbox"
+                                checked={all_oppen}
+                                onChange={e => this.toggleAllOppen()} />
 
-                        <label htmlFor="all-oppen">Expanded</label>
-                        <input type="button" onClick={e => this.reloadFlie(document)} value="Reload" />
-                    </div>
+                            <label htmlFor="all-oppen">Expanded</label>
+                        </div>
+                        <div className="all-oppen">
+                            <input
+                                id="beauty"
+                                type="checkbox"
+                                checked={beauty}
+                                onChange={e => this.toggleBeauty()} />
+
+                            <label htmlFor="beauty">Beauty</label>
+                        </div>
+                        <input className="reload" type="button" onClick={e => this.prossesFile(document)} value="Reload" />
+                        <input className="reload" type="button" onClick={e => {
+                            this.setState({ all_oppen: true, beauty: true });
+                            setTimeout(() => window.print(), 600);
+                            setTimeout(e => this.setState({ all_oppen, beauty }), 700);
+                        }} value="Print" />
+                    </navigator>
                     <Directory { ...props } />
                 </div>
             );
         } else {
-            return <input type="file" onChange={e => this.loadFlie(e.target)} />
+            return (
+                <div className="file-loader">
+                    <input value="Cargar Documento Maestro" type="button" onClick={e => this.refs.loadFile.click()} />
+                    <input type="file" ref="loadFile" onChange={e => this.loadFlie(e.target)} />
+                </div>
+            )
         }
     }
 }

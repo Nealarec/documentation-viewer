@@ -16,6 +16,8 @@ export default class Element extends Component {
             return <Missing {...this.props} />
         }
 
+
+
         switch (mime.lookup(files_path).split('/')[0]) {
             case "image": {
                 return <Image {...this.props} />

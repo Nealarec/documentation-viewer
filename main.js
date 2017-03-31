@@ -15,6 +15,8 @@ let mainWindow
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({ width: 800, height: 600 })
+  mainWindow.maximize();
+  mainWindow.setMenu(null);
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
@@ -34,7 +36,6 @@ function createWindow() {
     mainWindow = null
   })
 
-  mainWindow.maximize();
 }
 
 // This method will be called when Electron has finished

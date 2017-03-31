@@ -1,0 +1,24 @@
+navigator {
+    @extend .grey;
+    @extend .lighten-3;
+    top: 0;
+    width: 100%;
+    position: fixed;
+    padding: 3px 5px;
+    z-index: 100000;
+    border-bottom: 1px solid gray;
+    .reload {
+        @extend .waves-effect;
+        @extend .waves-light;
+        @extend .btn;
+        float: right;
+        height: 1.3rem;
+        line-height: 0.95rem;
+        margin-right: 10px;
+        padding: 0px 14px;
+    }
+    .all-oppen {
+        float: right;
+        margin-right: 10px;
+    }
+}

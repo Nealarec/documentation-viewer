@@ -19,4 +19,26 @@ export default class Element extends Component {
     visible() {
         return this.state.visible || this.props.all_oppen;
     }
+
+    reload() {
+        this.loadFile()
+    }
+
+    loadFile() { }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.time != this.props.time) {
+            this.loadFile();
+        }
+    }
+
+    getName() {
+        var { beauty, name } = this.props;
+
+        if (beauty) {
+            return name.split('.')[0].split("_").join(' ').toUpperCase();
+        } else {
+            return name;
+        }
+    }
 }
